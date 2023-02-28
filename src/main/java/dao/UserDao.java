@@ -70,7 +70,23 @@ public class UserDao {
      * @throws DataAccessException if a SQL error occurs
      */
     public User findById(String id) throws DataAccessException {
-        return null;
+        ResultSet rs;
+        String sql = "SELECT * FROM users WHERE personId = ? LIMIT 1;";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, id);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                User user = new User(rs.getString("personId"), rs.getString("username"), rs.getString("password"),
+                        rs.getString("email"), rs.getString("firstName"), rs.getString("lastName"),
+                        rs.getString("gender").charAt(0));
+                return user;
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DataAccessException("Error encountered while finding a user in the database: " + e);
+        }
     }
 
     /**
@@ -80,9 +96,8 @@ public class UserDao {
      * @throws DataAccessException if a SQL error occurs
      */
     public User findByUsername(String userName) throws DataAccessException {
-        String event;
         ResultSet rs;
-        String sql = "SELECT * FROM users WHERE username = ?;";
+        String sql = "SELECT * FROM users WHERE username = ? LIMIT 1;";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, userName);
             rs = stmt.executeQuery();

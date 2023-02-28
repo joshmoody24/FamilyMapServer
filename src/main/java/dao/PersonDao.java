@@ -4,6 +4,7 @@ import java.sql.Connection;
 import model.Person;
 import model.User;
 
+import javax.xml.crypto.Data;
 import java.sql.*;
 
 /**
@@ -58,7 +59,24 @@ public class PersonDao {
      * @throws DataAccessException if a SQL error occurs
      */
     public Person findById(String id) throws DataAccessException {
-        return null;
+        String event;
+        ResultSet rs;
+        String sql = "SELECT * FROM persons WHERE personId = ? LIMIT 1;";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, id);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                Person person = new Person(rs.getString("personId"), rs.getString("associatedUsername"), rs.getString("firstName"),
+                        rs.getString("lastName"), rs.getString("gender").charAt(0), rs.getString("fatherId"),
+                        rs.getString("motherId"), rs.getString("spouseId"));
+                return person;
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DataAccessException("Error encountered while finding a person in the database: " + e);
+        }
     }
 
     public Person findByAssociatedUsername(String username) throws DataAccessException {
@@ -85,7 +103,13 @@ public class PersonDao {
     /**
      * Deletes all person records from the database
      */
-    public void clear(){
-
+    public void clear() throws DataAccessException {
+        String sql = "DELETE FROM Persons";
+        try(PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new DataAccessException("Error encountered while clearing persons table: " + e);
+        }
     }
 }
