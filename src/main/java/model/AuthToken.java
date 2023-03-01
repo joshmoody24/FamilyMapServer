@@ -22,8 +22,8 @@ public class AuthToken {
      * @param username the username of the associated user
      */
     public AuthToken(String authtoken, String username){
-        authtoken = authtoken;
-        username = username;
+        this.authtoken = authtoken;
+        this.username = username;
     }
 
     public String getAuthtoken() {

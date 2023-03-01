@@ -1,8 +1,6 @@
 package dao;
 
 import model.AuthToken;
-import model.Person;
-import model.User;
 
 import java.sql.*;
 
@@ -51,7 +49,7 @@ public class AuthTokenDao {
      * @return the found AuthToken
      * @throws DataAccessException if a SQL error occurs
      */
-    public AuthToken findById(String id) throws DataAccessException {
+    public AuthToken findByToken(String id) throws DataAccessException {
         String event;
         ResultSet rs;
         String sql = "SELECT * FROM authtokens WHERE authtoken = ? LIMIT 1;";
@@ -77,12 +75,12 @@ public class AuthTokenDao {
      * @return the found AuthToken
      * @throws DataAccessException if a SQL error occurs
      */
-    public AuthToken findByUser(User user) throws DataAccessException {
+    public AuthToken findByUsername(String username) throws DataAccessException {
         String event;
         ResultSet rs;
         String sql = "SELECT * FROM authtokens WHERE username = ? LIMIT 1;";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, user.getUsername());
+            stmt.setString(1, username);
             rs = stmt.executeQuery();
             if (rs.next()) {
                 AuthToken token = new AuthToken(rs.getString("authtoken"), rs.getString("username"));
