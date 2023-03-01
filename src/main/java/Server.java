@@ -96,7 +96,7 @@ public class Server {
         // will be passed to this handle.
         // These are requests to download a file from the server
         // (e.g., web site files)
-        // server.createContext("/", new FileHandler());
+        server.createContext("/", new FileHandler());
 
         // Log message indicating that the HttpServer is about the start accepting
         // incoming client connections.
