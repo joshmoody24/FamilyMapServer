@@ -32,7 +32,7 @@ public class GetAllPersonsService {
             String username = token.getUsername();
             List<Person> people = new PersonDao(conn).findByAssociatedUsername(username);
             db.closeConnection(true);
-            return new GetAllPersonsResult(true, null, (Person[])people.toArray());
+            return new GetAllPersonsResult(true, null, people.toArray(new Person[0]));
         }
         catch(DoesNotExistException ex){
             db.closeConnection(true);

@@ -29,9 +29,12 @@ public class LoginService {
             UserDao userDao = new UserDao(conn);
             User user = userDao.findByUsername(l.getUsername());
 
-            LoginResult result;
-
             if(user == null) throw new DoesNotExistException("User with username " + l.getUsername() + " does not exist");
+            if(user.getPassword().equals(l.getPassword()) == false){
+                System.out.println("password in database (" + user.getPassword() + ") does not match password in request (" + l.getPassword() + ")");
+                throw new DoesNotExistException("Invalid password");
+            }
+
             UUID authToken = UUID.randomUUID();
             AuthTokenDao authDao = new AuthTokenDao(conn);
             authDao.create(new AuthToken(authToken.toString(), l.getUsername()));
