@@ -20,6 +20,7 @@ public class PersonGenerator {
      */
     public static Person generatePerson(String username, boolean male, String lastName){
         try {
+            // load the JSON person generator data
             Gson gson = new Gson();
             Reader readerMale = Files.newBufferedReader(Paths.get("./json/mnames.json"));
             Reader readerFemale = Files.newBufferedReader(Paths.get("./json/fnames.json"));
@@ -31,11 +32,13 @@ public class PersonGenerator {
             readerFemale.close();
             readerSurname.close();
 
+            // select names based on gender
             String[] firstNames = femaleNames;
             if(male) firstNames = maleNames;
             String lastname = lastName;
             if(lastName == null) lastname = getRandomString(lastNames);
 
+            // convert boolean gender into char
             char gender = 'F';
             if(male) gender = 'M';
 

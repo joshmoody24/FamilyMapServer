@@ -17,10 +17,13 @@ public class ClearService {
         Database db = new Database();
         try {
             Connection conn = db.openConnection();
+
+            // delete everything
             new AuthTokenDao(conn).clear();
             new EventDao(conn).clear();
             new PersonDao(conn).clear();
             new UserDao(conn).clear();
+
             db.closeConnection(true);
             return new ClearResult(true, "Clear succeeded");
         }

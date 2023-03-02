@@ -31,6 +31,8 @@ public class LoadService {
             ClearService clearService = new ClearService();
             clearService.clear();
 
+            // create all the objects in the request
+
             UserDao userDao = new UserDao(conn);
             for(User u : l.getUsers()){
                 userDao.create(u);

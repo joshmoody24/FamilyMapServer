@@ -16,7 +16,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 
-public class GetAllPersonsHandler implements HttpHandler {
+public class GetAllPersonsHandler extends Handler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -38,19 +38,5 @@ public class GetAllPersonsHandler implements HttpHandler {
         Gson gson = new Gson();
         gson.toJson(result, resBody);
         resBody.close();
-    }
-
-    private void send400Error(HttpExchange exchange) throws IOException {
-        exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
-        exchange.getResponseBody().close();
-    }
-
-    /*
-        The writeString method shows how to write a String to an OutputStream.
-    */
-    private void writeString(String str, OutputStream os) throws IOException {
-        OutputStreamWriter sw = new OutputStreamWriter(os);
-        sw.write(str);
-        sw.flush();
     }
 }

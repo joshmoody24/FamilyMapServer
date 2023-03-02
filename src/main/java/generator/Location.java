@@ -1,5 +1,8 @@
-package model;
+package generator;
 
+/**
+ * This is a conventient class to help with generating random events.
+ */
 public class Location {
     String country;
     String city;

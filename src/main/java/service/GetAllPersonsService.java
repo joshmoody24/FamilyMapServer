@@ -23,14 +23,15 @@ public class GetAllPersonsService {
      * @return the object containing all the person data
      */
     public GetAllPersonsResult getAllPersons(String authtoken){
-        GetPersonResult result;
         Database db = new Database();
         try {
             Connection conn = db.openConnection();
             AuthToken token = new AuthTokenDao(conn).findByToken(authtoken);
             if(token == null) throw new DoesNotExistException("Auth token was not found");
+
             String username = token.getUsername();
             List<Person> people = new PersonDao(conn).findByAssociatedUsername(username);
+
             db.closeConnection(true);
             return new GetAllPersonsResult(true, null, people.toArray(new Person[0]));
         }

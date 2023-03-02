@@ -29,14 +29,17 @@ public class LoginService {
             UserDao userDao = new UserDao(conn);
             User user = userDao.findByUsername(l.getUsername());
 
+            // validate password
             if(user == null) throw new DoesNotExistException("User with username " + l.getUsername() + " does not exist");
             if(user.getPassword().equals(l.getPassword()) == false){
                 throw new DoesNotExistException("Invalid password");
             }
 
+            // generate new AuthToken
             UUID authToken = UUID.randomUUID();
             AuthTokenDao authDao = new AuthTokenDao(conn);
             authDao.create(new AuthToken(authToken.toString(), l.getUsername()));
+
             db.closeConnection(true);
             return new LoginResult(true, null, authToken.toString(), user.getUsername(), user.getPersonId());
         }

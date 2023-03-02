@@ -8,7 +8,7 @@ import com.sun.net.httpserver.*;
 import request.ClearResult;
 import service.ClearService;
 
-public class ClearHandler implements HttpHandler {
+public class ClearHandler extends Handler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         if (!exchange.getRequestMethod().toLowerCase().equals("post")){
@@ -25,19 +25,5 @@ public class ClearHandler implements HttpHandler {
         Gson gson = new Gson();
         gson.toJson(result, resBody);
         resBody.close();
-    }
-
-    private void send400Error(HttpExchange exchange) throws IOException {
-        exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
-        exchange.getResponseBody().close();
-    }
-
-    /*
-        The writeString method shows how to write a String to an OutputStream.
-    */
-    private void writeString(String str, OutputStream os) throws IOException {
-        OutputStreamWriter sw = new OutputStreamWriter(os);
-        sw.write(str);
-        sw.flush();
     }
 }

@@ -31,8 +31,10 @@ public class GetAllEventsService {
             Connection conn = db.openConnection();
             AuthToken token = new AuthTokenDao(conn).findByToken(authtoken);
             if(token == null) throw new DoesNotExistException("Auth token was not found");
+
             String username = token.getUsername();
             List<Event> events = new EventDao(conn).findForUser(username);
+
             db.closeConnection(true);
             return new GetAllEventsResult(true, null, events.toArray(new Event[0]));
         }

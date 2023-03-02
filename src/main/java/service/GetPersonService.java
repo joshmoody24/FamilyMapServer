@@ -18,7 +18,6 @@ public class GetPersonService {
      * @return the resulting person data
      */
     public GetPersonResult getPerson(GetPersonRequest request){
-        GetPersonResult result;
         Database db = new Database();
         try {
             Connection conn = db.openConnection();

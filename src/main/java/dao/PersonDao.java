@@ -53,6 +53,11 @@ public class PersonDao {
         }
     }
 
+    /**
+     * Used to update a person's parents after the person's family tree has been generated
+     * @param person the person to update parents for (assuming their fatherID or motherID has been changed).
+     * @throws DataAccessException
+     */
     public void updateParents(Person person) throws DataAccessException {
         String sql = "UPDATE persons SET motherId = ?, fatherId = ? WHERE personId = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -93,6 +98,12 @@ public class PersonDao {
         }
     }
 
+    /**
+     * Find all people for a given user
+     * @param username the user to find people for
+     * @return list of people associated with the user
+     * @throws DataAccessException
+     */
     public List<Person> findByAssociatedUsername(String username) throws DataAccessException {
         List<Person> people = new ArrayList<>();
         String event;
@@ -127,6 +138,11 @@ public class PersonDao {
         }
     }
 
+    /**
+     * Clears the database of all person records associated with a user (except the user's own person record)
+     * @param user the user to clear out
+     * @throws DataAccessException
+     */
     public void clearGenealogyForUser(User user) throws DataAccessException {
         String sql = "DELETE FROM Persons where associatedUsername = ? and personId != ?";
         try(PreparedStatement stmt = conn.prepareStatement(sql)){
