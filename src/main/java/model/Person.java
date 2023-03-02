@@ -35,17 +35,17 @@ public class Person {
     /**
      * The id of the person's father (can be null)
      */
-    String fatherId;
+    String fatherID;
 
     /**
      * The id of the person's mother (can be null)
      */
-    String motherId;
+    String motherID;
 
     /**
      * the id of the person's spouse (can be null)
      */
-    String spouseId;
+    String spouseID;
 
     /**
      * Creates a new person
@@ -64,9 +64,9 @@ public class Person {
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
-        this.fatherId = fatherId;
-        this.motherId = motherId;
-        this.spouseId = spouseId;
+        this.fatherID = fatherId;
+        this.motherID = motherId;
+        this.spouseID = spouseId;
     }
 
     public String getPersonID() {
@@ -109,33 +109,33 @@ public class Person {
         this.gender = gender;
     }
 
-    public String getFatherId() {
-        return fatherId;
+    public String getFatherID() {
+        return fatherID;
     }
 
-    public void setFatherId(String fatherId) {
-        this.fatherId = fatherId;
+    public void setFatherID(String fatherID) {
+        this.fatherID = fatherID;
     }
 
-    public String getMotherId() {
-        return motherId;
+    public String getMotherID() {
+        return motherID;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(associatedUsername, firstName, lastName, gender, fatherId, motherId, spouseId, personID);
+        return Objects.hash(associatedUsername, firstName, lastName, gender, fatherID, motherID, spouseID, personID);
     }
 
-    public void setMotherId(String motherId) {
-        this.motherId = motherId;
+    public void setMotherID(String motherID) {
+        this.motherID = motherID;
     }
 
-    public String getSpouseId() {
-        return spouseId;
+    public String getSpouseID() {
+        return spouseID;
     }
 
-    public void setSpouseId(String spouseId) {
-        this.spouseId = spouseId;
+    public void setSpouseID(String spouseID) {
+        this.spouseID = spouseID;
     }
 
     @Override
@@ -143,7 +143,7 @@ public class Person {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return gender == person.gender && Objects.equals(associatedUsername, person.associatedUsername) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(fatherId, person.fatherId) && Objects.equals(motherId, person.motherId) && Objects.equals(spouseId, person.spouseId) && Objects.equals(personID, person.personID);
+        return gender == person.gender && Objects.equals(associatedUsername, person.associatedUsername) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(fatherID, person.fatherID) && Objects.equals(motherID, person.motherID) && Objects.equals(spouseID, person.spouseID) && Objects.equals(personID, person.personID);
     }
 
 }

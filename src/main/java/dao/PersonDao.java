@@ -4,7 +4,6 @@ import java.sql.Connection;
 import model.Person;
 import model.User;
 
-import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +43,22 @@ public class PersonDao {
             stmt.setString(3, person.getFirstName());
             stmt.setString(4, person.getLastName());
             stmt.setString(5, Character.toString(person.getGender()));
-            stmt.setString(6, person.getFatherId());
-            stmt.setString(7, person.getMotherId());
-            stmt.setString(8, person.getSpouseId());
+            stmt.setString(6, person.getFatherID());
+            stmt.setString(7, person.getMotherID());
+            stmt.setString(8, person.getSpouseID());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DataAccessException("Error encountered while inserting a person into the database: " + e);
+        }
+    }
+
+    public void updateParents(Person person) throws DataAccessException {
+        String sql = "UPDATE persons SET motherId = ?, fatherId = ? WHERE personId = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, person.getMotherID());
+            stmt.setString(2, person.getFatherID());
+            stmt.setString(3, person.getPersonID());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -112,6 +124,18 @@ public class PersonDao {
         } catch (SQLException e){
             e.printStackTrace();
             throw new DataAccessException("Error encountered while clearing persons table: " + e);
+        }
+    }
+
+    public void clearGenealogyForUser(User user) throws DataAccessException {
+        String sql = "DELETE FROM Persons where associatedUsername = ? and personId != ?";
+        try(PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getPersonId());
+            stmt.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new DataAccessException("Error encountered while clearing persons table for user " + user.getUsername() + ": " + e);
         }
     }
 }

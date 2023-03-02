@@ -5,6 +5,7 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import request.*;
+import service.DoesNotExistException;
 import service.FillService;
 import service.GetPersonService;
 import service.LoadService;
@@ -16,25 +17,38 @@ public class FillHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
+        System.out.println("Handling fill");
+
         if (!exchange.getRequestMethod().toLowerCase().equals("post")){
             send400Error(exchange);
             return;
         }
 
-        Headers reqHeaders = exchange.getRequestHeaders();
-        if (!reqHeaders.containsKey("Authorization")) send400Error(exchange);
-        String authToken = reqHeaders.getFirst("Authorization");
-        if (!authToken.equals("afj232hj2332")) send400Error(exchange);
-
-        InputStream reqBody = exchange.getRequestBody();
-        String reqData = readString(reqBody);
-        Gson gson = new Gson();
-        FillRequest request = gson.fromJson(reqData, FillRequest.class);
         FillService service = new FillService();
-        FillResult result = service.fill(request);
+        String path = exchange.getRequestURI().getPath();
+        String[] pathSlices = path.split("/");
+        if(pathSlices.length != 3){
+            send400Error(exchange);
+            return;
+        }
 
-        exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+        String username = pathSlices[1];
+        int generations;
+        try {
+            generations = Integer.parseInt(pathSlices[2]);
+            if(generations < 0) throw new Exception("Generations must be non-negative");
+        } catch(Exception ex){
+            send400Error(exchange);
+            return;
+        }
+        FillResult result = service.fill(new FillRequest(username, generations));
 
+        if(result.isSuccess()) exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+        else exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+
+        System.out.println(result.getMessage());
+
+        Gson gson = new Gson();
         Writer resBody = new OutputStreamWriter(exchange.getResponseBody());
         gson.toJson(result, resBody);
         resBody.close();

@@ -77,7 +77,7 @@ public class Server {
         try {
             server.createContext("/user/register", new RegisterHandler());
             server.createContext("/user/login", new LoginHandler());
-            server.createContext("/fill/todo/todo", new FillHandler());
+            server.createContext("/fill/", new FillHandler());
             server.createContext("/load", new LoadHandler());
             server.createContext("/clear", new ClearHandler());
             server.createContext("/person/", new GetPersonHandler());

@@ -25,7 +25,7 @@ public class GetPersonService {
             Person p = new PersonDao(conn).findById(request.getPersonID());
             if(p == null) throw new DoesNotExistException("Person does not exist");
             db.closeConnection(true);
-            return new GetPersonResult(true, null, p.getAssociatedUsername(), p.getPersonID(), p.getFirstName(), p.getLastName(), Character.toString(p.getGender()), p.getFatherId(), p.getMotherId(), p.getSpouseId());
+            return new GetPersonResult(true, null, p.getAssociatedUsername(), p.getPersonID(), p.getFirstName(), p.getLastName(), Character.toString(p.getGender()), p.getFatherID(), p.getMotherID(), p.getSpouseID());
         }
         catch(DoesNotExistException ex){
             db.closeConnection(false);

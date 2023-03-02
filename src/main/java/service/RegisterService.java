@@ -7,6 +7,7 @@ import dao.UserDao;
 import model.AuthToken;
 import model.Person;
 import model.User;
+import request.FillRequest;
 import request.RegisterRequest;
 import request.RegisterResult;
 
@@ -31,11 +32,21 @@ public class RegisterService {
             UserDao userDao = new UserDao(conn);
             UUID personId = UUID.randomUUID();
             userDao.create(new User(personId.toString(), r.getUsername(), r.getPassword(), r.getEmail(), r.getFirstName(), r.getLastName(), r.getGender().charAt(0)));
-            new PersonDao(conn).create(new Person(personId.toString(), r.getUsername(), r.getFirstName(), r.getLastName(), r.getGender().charAt(0), null, null, null));
+
+            PersonDao personDao = new PersonDao(conn);
+            personDao.create(new Person(personId.toString(), r.getUsername(), r.getFirstName(), r.getLastName(), r.getGender().charAt(0), null, null, null));
+
             UUID authToken = UUID.randomUUID();
             AuthTokenDao authDao = new AuthTokenDao(conn);
             authDao.create(new AuthToken(authToken.toString(), r.getUsername()));
+
+            // commit changes so the fill service has something in the database to work with
             db.closeConnection(true);
+
+            // generate genealogy
+            FillService fillService = new FillService();
+            fillService.fill(new FillRequest(r.getUsername(), 4));
+
             return new RegisterResult(true, null, authToken.toString(), r.getUsername(), personId.toString());
         }
         catch(Exception e){
