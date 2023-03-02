@@ -3,7 +3,7 @@ package request;
 /**
  * base class for all results
  */
-public abstract class Result {
+public class Result {
 
     /**
      * whether the requested operation was successful

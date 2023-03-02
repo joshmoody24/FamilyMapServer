@@ -18,8 +18,16 @@ public class FileHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         if (!exchange.getRequestMethod().toLowerCase().equals("get")) send400Error(exchange);
 
-        String path = "./web" + exchange.getRequestURI().getPath();
+        String path = exchange.getRequestURI().getPath();
+        if(path.equals("/") || path.equals("")){
+            path = "/index.html";
+        }
+        path = "./web" + path;
         File file = new File(path);
+        if(file.exists() == false){
+            path = "./web/HTML/404.html";
+        }
+        file = new File(path);
 
         System.out.println("fetching file " + path);
         OutputStream os = exchange.getResponseBody();

@@ -75,16 +75,15 @@ public class Server {
         // "/routes/claim" URL path, it will forward the request to ClaimRouteHandler
         // for processing.
         try {
-            //server.createContext("/user/register", new RegisterHandler());
-            //server.createContext("/user/login", new LoginHandler());
-            //server.createContext("/fill/todo/todo", new FillHandler());
-            //server.createContext("/load", new LoadHandler());
+            server.createContext("/user/register", new RegisterHandler());
+            server.createContext("/user/login", new LoginHandler());
+            server.createContext("/fill/todo/todo", new FillHandler());
+            server.createContext("/load", new LoadHandler());
             server.createContext("/clear", new ClearHandler());
             server.createContext("/person/", new GetPersonHandler());
-            //server.createContext("/person/todo", new GetAllPersonsHandler());
-            //server.createContext("/event/todo", new GetEventHandler());
-            //server.createContext("/event", new GetAllEventsHandler());
-            //server.createContext("/user/login", new LoginHandler());
+            server.createContext("/person", new GetAllPersonsHandler());
+            server.createContext("/event/todo", new GetEventHandler());
+            server.createContext("/event", new GetAllEventsHandler());
         }
         catch(Exception e){
             e.printStackTrace();

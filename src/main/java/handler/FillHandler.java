@@ -4,40 +4,35 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-
-import request.GetPersonRequest;
-import request.GetPersonResult;
+import request.*;
+import service.FillService;
 import service.GetPersonService;
+import service.LoadService;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.net.HttpURLConnection;
 
-public class GetPersonHandler implements HttpHandler {
+public class FillHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
-        if (!exchange.getRequestMethod().toLowerCase().equals("get")) send400Error(exchange);
+        if (!exchange.getRequestMethod().toLowerCase().equals("post")) send400Error(exchange);
+
         Headers reqHeaders = exchange.getRequestHeaders();
         if (!reqHeaders.containsKey("Authorization")) send400Error(exchange);
         String authToken = reqHeaders.getFirst("Authorization");
         if (!authToken.equals("afj232hj2332")) send400Error(exchange);
 
-        String[] pathSegments = exchange.getRequestURI().getPath().split("/");
-        String username = pathSegments[pathSegments.length - 1];
-        System.out.println("Requested user with username: " + username);
-
-        GetPersonRequest request = new GetPersonRequest(username);
-
-        GetPersonService service = new GetPersonService();
-        GetPersonResult result = service.getPerson(request);
+        InputStream reqBody = exchange.getRequestBody();
+        String reqData = readString(reqBody);
+        Gson gson = new Gson();
+        FillRequest request = gson.fromJson(reqData, FillRequest.class);
+        FillService service = new FillService();
+        FillResult result = service.fill(request);
 
         exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
 
         Writer resBody = new OutputStreamWriter(exchange.getResponseBody());
-        Gson gson = new Gson();
         gson.toJson(result, resBody);
         resBody.close();
     }
@@ -54,5 +49,16 @@ public class GetPersonHandler implements HttpHandler {
         OutputStreamWriter sw = new OutputStreamWriter(os);
         sw.write(str);
         sw.flush();
+    }
+
+    private String readString(InputStream is) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        InputStreamReader sr = new InputStreamReader(is);
+        char[] buf = new char[1024];
+        int len;
+        while ((len = sr.read(buf)) > 0) {
+            sb.append(buf, 0, len);
+        }
+        return sb.toString();
     }
 }

@@ -4,9 +4,10 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-
+import request.GetAllPersonsResult;
 import request.GetPersonRequest;
 import request.GetPersonResult;
+import service.GetAllPersonsService;
 import service.GetPersonService;
 
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 
-public class GetPersonHandler implements HttpHandler {
+public class GetAllPersonsHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -25,14 +26,8 @@ public class GetPersonHandler implements HttpHandler {
         String authToken = reqHeaders.getFirst("Authorization");
         if (!authToken.equals("afj232hj2332")) send400Error(exchange);
 
-        String[] pathSegments = exchange.getRequestURI().getPath().split("/");
-        String username = pathSegments[pathSegments.length - 1];
-        System.out.println("Requested user with username: " + username);
-
-        GetPersonRequest request = new GetPersonRequest(username);
-
-        GetPersonService service = new GetPersonService();
-        GetPersonResult result = service.getPerson(request);
+        GetAllPersonsService service = new GetAllPersonsService();
+        GetAllPersonsResult result = service.getAllPersons();
 
         exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
 

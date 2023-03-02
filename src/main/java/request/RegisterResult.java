@@ -19,7 +19,7 @@ public class RegisterResult extends Result {
     /**
      * the id of the validated user's person record
      */
-    String personId;
+    String personID;
 
     /**
      * Creates a new RegisterResult
@@ -33,7 +33,7 @@ public class RegisterResult extends Result {
         super(success, message);
         this.authtoken = authtoken;
         this.username = username;
-        this.personId = personId;
+        this.personID = personId;
     }
 
     public String getAuthtoken() {
@@ -45,6 +45,6 @@ public class RegisterResult extends Result {
     }
 
     public String getPersonId() {
-        return personId;
+        return personID;
     }
 }

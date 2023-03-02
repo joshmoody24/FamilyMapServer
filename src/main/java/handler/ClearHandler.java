@@ -11,7 +11,6 @@ import service.ClearService;
 public class ClearHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        System.out.println("Handling clear");
         if (!exchange.getRequestMethod().toLowerCase().equals("get")) send400Error(exchange);
         Headers reqHeaders = exchange.getRequestHeaders();
         if (!reqHeaders.containsKey("Authorization")) send400Error(exchange);
@@ -27,7 +26,6 @@ public class ClearHandler implements HttpHandler {
         Gson gson = new Gson();
         gson.toJson(result, resBody);
         resBody.close();
-        System.out.println("Finished handling clear");
     }
 
     private void send400Error(HttpExchange exchange) throws IOException {
