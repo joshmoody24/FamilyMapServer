@@ -1,8 +1,10 @@
 package dao;
 
 import model.Event;
+import model.Person;
 import model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import java.sql.*;
@@ -61,8 +63,25 @@ public class EventDao {
      * @param user the user to find events for
      * @return the list of found events
      */
-    public List<Event> findForUser(User user){
-        return null;
+    public List<Event> findForUser(String username) throws DataAccessException {
+        List<Event> events = new ArrayList<>();
+        ResultSet rs;
+        String sql = "SELECT * FROM events WHERE associatedUsername = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, username);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                Event event = new Event(rs.getString("EventID"), rs.getString("AssociatedUsername"),
+                        rs.getString("PersonID"), rs.getFloat("Latitude"), rs.getFloat("Longitude"),
+                        rs.getString("Country"), rs.getString("City"), rs.getString("EventType"),
+                        rs.getInt("Year"));
+                events.add(event);
+            }
+            return events;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DataAccessException("Error encountered while finding all events in the database: " + e);
+        }
     }
 
     /**

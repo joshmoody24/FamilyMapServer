@@ -17,7 +17,10 @@ import java.net.HttpURLConnection;
 public class LoadHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        if (!exchange.getRequestMethod().toLowerCase().equals("post")) send400Error(exchange);
+        if (!exchange.getRequestMethod().toLowerCase().equals("post")){
+            send400Error(exchange);
+            return;
+        }
 
         InputStream reqBody = exchange.getRequestBody();
         String reqData = readString(reqBody);

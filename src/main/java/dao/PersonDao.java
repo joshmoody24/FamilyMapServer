@@ -6,6 +6,8 @@ import model.User;
 
 import javax.xml.crypto.Data;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Person Data Access Object. Handles creating and clearing people records in the database
@@ -79,21 +81,21 @@ public class PersonDao {
         }
     }
 
-    public Person findByAssociatedUsername(String username) throws DataAccessException {
+    public List<Person> findByAssociatedUsername(String username) throws DataAccessException {
+        List<Person> people = new ArrayList<>();
         String event;
         ResultSet rs;
-        String sql = "SELECT * FROM persons WHERE associatedUsername = ? LIMIT 1;";
+        String sql = "SELECT * FROM persons WHERE associatedUsername = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
             rs = stmt.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 Person person = new Person(rs.getString("personId"), rs.getString("associatedUsername"), rs.getString("firstName"),
-                    rs.getString("lastName"), rs.getString("gender").charAt(0), rs.getString("fatherId"),
-                    rs.getString("motherId"), rs.getString("spouseId"));
-                return person;
-            } else {
-                return null;
+                        rs.getString("lastName"), rs.getString("gender").charAt(0), rs.getString("fatherId"),
+                        rs.getString("motherId"), rs.getString("spouseId"));
+                people.add(person);
             }
+            return people;
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DataAccessException("Error encountered while finding a person in the database: " + e);

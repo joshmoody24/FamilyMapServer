@@ -22,9 +22,9 @@ public class RegisterService {
      * @return the result data
      */
     public RegisterResult register(RegisterRequest r){
+        Database db = new Database();
         try {
             System.out.println("Registering user: " + r.getUsername());
-            Database db = new Database();
             Connection conn = db.openConnection();
             UserDao userDao = new UserDao(conn);
             UUID personId = UUID.randomUUID();
@@ -32,10 +32,12 @@ public class RegisterService {
             UUID authToken = UUID.randomUUID();
             AuthTokenDao authDao = new AuthTokenDao(conn);
             authDao.create(new AuthToken(authToken.toString(), r.getUsername()));
+            db.closeConnection(true);
             return new RegisterResult(true, null, authToken.toString(), r.getUsername(), personId.toString());
         }
         catch(Exception e){
             e.printStackTrace();
+            db.closeConnection(false);
             return new RegisterResult(false, "Error: " + e.getMessage(), null, null, null);
         }
     }

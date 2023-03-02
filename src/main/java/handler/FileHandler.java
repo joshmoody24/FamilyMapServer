@@ -16,7 +16,10 @@ import java.nio.file.Paths;
 public class FileHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        if (!exchange.getRequestMethod().toLowerCase().equals("get")) send400Error(exchange);
+        if (!exchange.getRequestMethod().toLowerCase().equals("get")){
+            send400Error(exchange);
+            return;
+        }
 
         String path = exchange.getRequestURI().getPath();
         if(path.equals("/") || path.equals("")){

@@ -11,11 +11,10 @@ import service.ClearService;
 public class ClearHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        if (!exchange.getRequestMethod().toLowerCase().equals("get")) send400Error(exchange);
-        Headers reqHeaders = exchange.getRequestHeaders();
-        if (!reqHeaders.containsKey("Authorization")) send400Error(exchange);
-        String authToken = reqHeaders.getFirst("Authorization");
-        if (!authToken.equals("afj232hj2332")) send400Error(exchange);
+        if (!exchange.getRequestMethod().toLowerCase().equals("post")){
+            send400Error(exchange);
+            return;
+        }
 
         ClearService service = new ClearService();
         ClearResult result = service.clear();

@@ -19,7 +19,7 @@ public class LoginResult extends Result {
     /**
      * The id of the person record associated with the user
      */
-    String personId;
+    String personID;
 
     /**
      * creates a new LoginResult
@@ -34,7 +34,7 @@ public class LoginResult extends Result {
         super(success, message);
         this.authtoken = authtoken;
         this.username = username;
-        this.personId = personId;
+        this.personID = personId;
     }
 
     public String getAuthtoken() {
@@ -45,7 +45,7 @@ public class LoginResult extends Result {
         return username;
     }
 
-    public String getPersonId() {
-        return personId;
+    public String getPersonID() {
+        return personID;
     }
 }

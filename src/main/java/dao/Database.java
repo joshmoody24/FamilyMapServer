@@ -38,7 +38,6 @@ public class Database {
             e.printStackTrace();
             throw new DataAccessException("Unable to open connection to database");
         }
-
         return conn;
     }
 

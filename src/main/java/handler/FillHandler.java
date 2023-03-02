@@ -16,7 +16,10 @@ public class FillHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
-        if (!exchange.getRequestMethod().toLowerCase().equals("post")) send400Error(exchange);
+        if (!exchange.getRequestMethod().toLowerCase().equals("post")){
+            send400Error(exchange);
+            return;
+        }
 
         Headers reqHeaders = exchange.getRequestHeaders();
         if (!reqHeaders.containsKey("Authorization")) send400Error(exchange);

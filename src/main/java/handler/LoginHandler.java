@@ -15,8 +15,10 @@ import java.net.HttpURLConnection;
 public class LoginHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        if (!exchange.getRequestMethod().toLowerCase().equals("post")) send400Error(exchange);
-        // todo: auth
+        if (!exchange.getRequestMethod().toLowerCase().equals("post")){
+            send400Error(exchange);
+            return;
+        }
         InputStream reqBody = exchange.getRequestBody();
         String reqData = readString(reqBody);
         Gson gson = new Gson();
@@ -25,7 +27,9 @@ public class LoginHandler implements HttpHandler {
         LoginService service = new LoginService();
         LoginResult result = service.login(request);
 
-        exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+        if(result.isSuccess() == false) exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+        else exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+
         Writer resBody = new OutputStreamWriter(exchange.getResponseBody());
         gson.toJson(result, resBody);
         resBody.close();

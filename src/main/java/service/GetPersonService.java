@@ -19,20 +19,22 @@ public class GetPersonService {
      */
     public GetPersonResult getPerson(GetPersonRequest request){
         GetPersonResult result;
+        Database db = new Database();
         try {
-            Database db = new Database();
             Connection conn = db.openConnection();
             Person p = new PersonDao(conn).findById(request.getPersonID());
             if(p == null) throw new DoesNotExistException("Person does not exist");
-            result = new GetPersonResult(true, null, p.getAssociatedUsername(), p.getPersonID(), p.getFirstName(), p.getLastName(), Character.toString(p.getGender()), p.getFatherId(), p.getMotherId(), p.getSpouseId());
+            db.closeConnection(true);
+            return new GetPersonResult(true, null, p.getAssociatedUsername(), p.getPersonID(), p.getFirstName(), p.getLastName(), Character.toString(p.getGender()), p.getFatherId(), p.getMotherId(), p.getSpouseId());
         }
         catch(DoesNotExistException ex){
-            result = new GetPersonResult(false, ex.getMessage(), null, null, null, null, null, null, null, null);
+            db.closeConnection(false);
+            return new GetPersonResult(false, ex.getMessage(), null, null, null, null, null, null, null, null);
         }
         catch(Exception ex){
             ex.printStackTrace();
-            result = new GetPersonResult(false, "Error: getting person data failed", null, null, null, null, null, null, null, null);
+            db.closeConnection(false);
+            return new GetPersonResult(false, "Error: getting person data failed", null, null, null, null, null, null, null, null);
         }
-        return result;
     }
 }
