@@ -27,7 +27,7 @@ public class FillService {
         try{
             Connection conn = db.openConnection();
             User user = new UserDao(conn).findByUsername(r.getUsername());
-            if(user == null) throw new DoesNotExistException("User does not exist");
+            if(user == null) throw new DoesNotExistException("User " + r.getUsername() + " does not exist");
             PersonDao personDao = new PersonDao(conn);
 
             personDao.clearGenealogyForUser(user);
@@ -43,7 +43,7 @@ public class FillService {
             List<Person> generatedPeople = personDao.findByAssociatedUsername(r.getUsername());
             List<Event> generatedEvents = eventDao.findForUser(r.getUsername());
             db.closeConnection(true);
-            return new FillResult(true, "Successfully added " + generatedPeople.size() + " and " + generatedEvents.size() + " events to the database.");
+            return new FillResult(true, "Successfully added " + generatedPeople.size() + " persons and " + generatedEvents.size() + " events to the database.");
         } catch(Exception e){
             e.printStackTrace();
             db.closeConnection(false);
@@ -74,10 +74,9 @@ public class FillService {
         if(person.getSpouseID() != null){
             eventDao.create(EventGenerator.generateEvent("marriage", birthYear + 20, person.getAssociatedUsername(), person.getPersonID()));
         }
-        // people die at age 80 always, compared to currentYear
-        if(currentYear - birthYear > 80){
-            eventDao.create(EventGenerator.generateEvent("death", birthYear + 80, person.getAssociatedUsername(), person.getPersonID()));
-        }
+
+        // everyone but user is dead one year after giving birth, sadness
+        eventDao.create(EventGenerator.generateEvent("death", birthYear + 22, person.getAssociatedUsername(), person.getPersonID()));
 
         // do the same thing for the person's parents, if they exist
         Person mother = personDao.findById(person.getMotherID());

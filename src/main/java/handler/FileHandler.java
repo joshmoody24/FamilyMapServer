@@ -21,6 +21,8 @@ public class FileHandler implements HttpHandler {
             return;
         }
 
+        int responseCode = 200;
+
         String path = exchange.getRequestURI().getPath();
         if(path.equals("/") || path.equals("")){
             path = "/index.html";
@@ -29,6 +31,7 @@ public class FileHandler implements HttpHandler {
         File file = new File(path);
         if(file.exists() == false){
             path = "./web/HTML/404.html";
+            responseCode = 404;
         }
         file = new File(path);
 
@@ -45,7 +48,7 @@ public class FileHandler implements HttpHandler {
                 response += line;
             }
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, response.length());
+            exchange.sendResponseHeaders(responseCode, response.length());
 
             System.out.println(response);
             writeString(response, os);

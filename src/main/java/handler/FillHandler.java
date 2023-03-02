@@ -17,8 +17,6 @@ public class FillHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
-        System.out.println("Handling fill");
-
         if (!exchange.getRequestMethod().toLowerCase().equals("post")){
             send400Error(exchange);
             return;
@@ -27,15 +25,16 @@ public class FillHandler implements HttpHandler {
         FillService service = new FillService();
         String path = exchange.getRequestURI().getPath();
         String[] pathSlices = path.split("/");
-        if(pathSlices.length != 3){
+        // first slice is empty string
+        if(pathSlices.length != 4){
             send400Error(exchange);
             return;
         }
 
-        String username = pathSlices[1];
+        String username = pathSlices[2];
         int generations;
         try {
-            generations = Integer.parseInt(pathSlices[2]);
+            generations = Integer.parseInt(pathSlices[3]);
             if(generations < 0) throw new Exception("Generations must be non-negative");
         } catch(Exception ex){
             send400Error(exchange);
