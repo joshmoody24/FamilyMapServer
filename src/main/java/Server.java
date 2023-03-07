@@ -117,6 +117,10 @@ public class Server {
     // "args" should contain one command-line argument, which is the port number
     // on which the server should accept incoming client connections.
     public static void main(String[] args) {
+        if(args.length == 0){
+            System.out.println("Please specify port number as first CLI argument");
+            System.exit(1);
+        }
         String portNumber = args[0];
         new Server().run(portNumber);
     }

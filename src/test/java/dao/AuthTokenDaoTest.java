@@ -63,6 +63,21 @@ public class AuthTokenDaoTest {
     }
 
     @Test
+    public void findByTokenPass() throws DataAccessException {
+        dao.create(token);
+        AuthToken found = dao.findByToken(token.getAuthtoken());
+        assertNotNull(found);
+        assertEquals(token, found);
+    }
+
+    @Test
+    public void findByTokenFail() throws DataAccessException {
+        dao.create(token);
+        AuthToken found = dao.findByToken("random username");
+        assertNull(found);
+    }
+
+    @Test
     public void clearTest() throws DataAccessException {
         dao.create(token);
         dao.clear();

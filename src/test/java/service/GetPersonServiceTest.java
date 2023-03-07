@@ -46,4 +46,14 @@ public class GetPersonServiceTest {
         assertNotNull(result.getMessage());
         assertNull(result.getGender());
     }
+
+    @Test
+    public void getPersonWithoutAuth() {
+        GetPersonRequest request = new GetPersonRequest(personID);
+        GetPersonResult result = new GetPersonService().getPerson(request, "bad auth");
+        assertFalse(result.isSuccess());
+        assertNotNull(result.getMessage());
+        assertTrue(result.getMessage().toLowerCase().contains("auth"));
+        assertNull(result.getGender());
+    }
 }

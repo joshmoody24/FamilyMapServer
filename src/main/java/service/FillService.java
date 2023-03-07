@@ -35,7 +35,7 @@ public class FillService {
             EventDao eventDao = new EventDao(conn);
 
             // delete old family tree if necessary
-            personDao.clearGenealogyForUser(user);
+            personDao.clearGenealogyForUser(user.getUsername(), user.getPersonId());
             eventDao.clearForUser(user.getUsername());
 
             Person userPerson = personDao.findById(user.getPersonId());

@@ -1,13 +1,10 @@
 package service;
 
 import model.Event;
-import model.Person;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import request.*;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,6 +54,17 @@ public class GetEventServiceTest {
         GetEventResult result = new GetEventService().getEvent(request, authtoken);
         assertFalse(result.isSuccess());
         assertNotNull(result.getMessage());
+        assertNull(result.getCity());
+    }
+
+    @Test
+    public void getEventWithoutAuth() {
+        GetEventRequest request = new GetEventRequest("this value doesn't matter");
+        GetEventResult result = new GetEventService().getEvent(request, "bad auth token");
+        assertFalse(result.isSuccess());
+        assertNotNull(result.getMessage());
+        assertTrue(result.getMessage().toLowerCase().contains("error"));
+        assertTrue(result.getMessage().toLowerCase().contains("auth"));
         assertNull(result.getCity());
     }
 }

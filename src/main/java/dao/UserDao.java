@@ -53,17 +53,6 @@ public class UserDao {
     }
 
     /**
-     * Validate a user's credentials
-     * @param username the username of the user being validated
-     * @param password the password of the user being validated
-     * @return true if the password matches the user of the given username, false otherwise
-     * @throws DataAccessException if a SQL error occurs
-     */
-    public boolean validate(String username, String password) throws DataAccessException {
-        return true;
-    }
-
-    /**
      * Finds a user by id
      * @param id the id of the user being searched for
      * @return the found user

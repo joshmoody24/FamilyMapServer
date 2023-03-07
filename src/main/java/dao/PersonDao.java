@@ -140,18 +140,19 @@ public class PersonDao {
 
     /**
      * Clears the database of all person records associated with a user (except the user's own person record)
-     * @param user the user to clear out
+     * @param username the user to clear out
+     * @param personId the user's personId (so we don't delete that record)
      * @throws DataAccessException
      */
-    public void clearGenealogyForUser(User user) throws DataAccessException {
+    public void clearGenealogyForUser(String username, String personId) throws DataAccessException {
         String sql = "DELETE FROM Persons where associatedUsername = ? and personId != ?";
         try(PreparedStatement stmt = conn.prepareStatement(sql)){
-            stmt.setString(1, user.getUsername());
-            stmt.setString(2, user.getPersonId());
+            stmt.setString(1, username);
+            stmt.setString(2, personId);
             stmt.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
-            throw new DataAccessException("Error encountered while clearing persons table for user " + user.getUsername() + ": " + e);
+            throw new DataAccessException("Error encountered while clearing persons table for user " + username + ": " + e);
         }
     }
 }

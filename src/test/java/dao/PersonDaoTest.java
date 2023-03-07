@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,22 +48,21 @@ public class PersonDaoTest {
         assertThrows(DataAccessException.class, () -> dao.create(person));
     }
 
-    /* TODO fix these
     @Test
     public void findByUsernamePass() throws DataAccessException {
         dao.create(person);
-        Person foundPerson = dao.findByAssociatedUsername(person.getAssociatedUsername());
-        assertNotNull(foundPerson);
-        assertEquals(person, foundPerson);
+        List<Person> foundPersons = dao.findByAssociatedUsername(person.getAssociatedUsername());
+        assertNotNull(foundPersons);
+        assertEquals(1, foundPersons.size());
     }
 
     @Test
     public void findByUsernameFail() throws DataAccessException {
         dao.create(person);
-        Person foundPerson = dao.findByAssociatedUsername("random username");
-        assertNull(foundPerson);
+        List<Person> foundPersons = dao.findByAssociatedUsername("nonexistent username");
+        assertNotNull(foundPersons);
+        assertEquals(0, foundPersons.size());
     }
-    */
 
     @Test
     public void findByIdPass() throws DataAccessException {
@@ -80,10 +80,73 @@ public class PersonDaoTest {
     }
 
     @Test
+    public void updateParentsPass() throws DataAccessException {
+        dao.create(person);
+        Person mom = new Person("mom123", "joshmoody24", "April", "Moody",
+            'F', null, null, null);
+        Person dad = new Person("dad123", "joshmoody24", "Dallan", "Moody",
+                'M', null, null, null);
+        person.setMotherID(mom.getPersonID());
+        person.setFatherID(dad.getPersonID());
+        dao.create(mom);
+        dao.create(dad);
+        dao.updateParents(person);
+
+        // fetch child from database again to see if it updated correctly
+        Person child = dao.findById(person.getPersonID());
+        assertNotNull(child);
+        assertEquals("mom123", child.getMotherID());
+        assertEquals("dad123", child.getFatherID());
+    }
+
+    @Test
+    public void updateParentsWithNullValues() throws DataAccessException {
+        dao.create(person);
+        person.setMotherID(null);
+        person.setFatherID(null);
+        assertDoesNotThrow(() -> dao.updateParents(person));
+
+        // fetch child from database again to see if it updated correctly
+        Person foundPerson = dao.findById(person.getPersonID());
+        assertNotNull(foundPerson);
+        assertEquals(null, foundPerson.getMotherID());
+        assertEquals(null, foundPerson.getFatherID());
+    }
+
+    @Test
     public void clearTest() throws DataAccessException {
         dao.create(person);
         dao.clear();
         Person foundPerson = dao.findById(person.getPersonID());
         assertNull(foundPerson);
+    }
+
+    @Test
+    public void clearGenealogyForUserPass() throws DataAccessException {
+        Person differentUser = new Person("asdf", "anotherguy", "April", "Moody",
+                'F', null, null, null);
+        Person mom = new Person("mom123", "joshmoody24", "April", "Moody",
+                'F', null, null, null);
+        person.setMotherID(mom.getPersonID());
+        dao.create(mom);
+        dao.create(person);
+        dao.create(differentUser);
+
+        dao.clearGenealogyForUser(person.getAssociatedUsername(), person.getPersonID());
+        Person foundMom = dao.findById(mom.getPersonID());
+        assertNull(foundMom);
+        Person foundChild = dao.findById(person.getPersonID());
+        assertNotNull(foundChild); // we don't delete user's personal record
+        List<Person> anotherGuyPersons = dao.findByAssociatedUsername("anotherguy");
+        assertEquals(1, anotherGuyPersons.size());
+    }
+
+    @Test
+    public void clearGenealogyForNonexistentUser() throws DataAccessException {
+        dao.create(person);
+        dao.clearGenealogyForUser("invalid username", "invalid person id");
+        Person foundPerson = dao.findById("jam436");
+        assertNotNull(foundPerson);
+        assertEquals("jam436", foundPerson.getPersonID());
     }
 }
