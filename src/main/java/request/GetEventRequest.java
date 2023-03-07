@@ -11,10 +11,10 @@ public class GetEventRequest {
 
     /**
      * Creates a new GetEventRequest
-     * @param personID the id of the event being requested
+     * @param eventID the id of the event being requested
      */
-    public GetEventRequest(String personID) {
-        this.eventID = personID;
+    public GetEventRequest(String eventID) {
+        this.eventID = eventID;
     }
 
     public String getEventID() {

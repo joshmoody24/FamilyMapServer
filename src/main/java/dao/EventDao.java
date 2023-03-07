@@ -21,6 +21,7 @@ public class EventDao {
 
     /**
      * creates an EventDao
+     *
      * @param conn the database connection object
      */
     public EventDao(Connection conn) {
@@ -29,6 +30,7 @@ public class EventDao {
 
     /**
      * Creates an event in the database
+     *
      * @param event the event to store in the database
      * @throws DataAccessException if a SQL error occurs
      */
@@ -60,6 +62,7 @@ public class EventDao {
 
     /**
      * Finds all events associated with a user in the database
+     *
      * @param user the user to find events for
      * @return the list of found events
      */
@@ -84,8 +87,30 @@ public class EventDao {
         }
     }
 
+    public List<Event> findForPerson(String personId) throws DataAccessException {
+        List<Event> events = new ArrayList<>();
+        ResultSet rs;
+        String sql = "SELECT * FROM events WHERE personId = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, personId);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                Event event = new Event(rs.getString("EventID"), rs.getString("AssociatedUsername"),
+                        rs.getString("PersonID"), rs.getFloat("Latitude"), rs.getFloat("Longitude"),
+                        rs.getString("Country"), rs.getString("City"), rs.getString("EventType"),
+                        rs.getInt("Year"));
+                events.add(event);
+            }
+            return events;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DataAccessException("Error encountered while finding all events in the database: " + e);
+        }
+    }
+
     /**
      * Finds an event with the given id
+     *
      * @param eventID the unique event id to search for
      * @return the found event
      * @throws DataAccessException if a SQL error occurs
@@ -115,6 +140,7 @@ public class EventDao {
 
     /**
      * Deletes all event records in the database
+     *
      * @throws DataAccessException if a SQL error occurs
      */
     public void clear() throws DataAccessException {
@@ -124,6 +150,17 @@ public class EventDao {
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DataAccessException("Error encountered while clearing the event table");
+        }
+    }
+
+    public void clearForUser(String username) throws DataAccessException {
+        String sql = "DELETE FROM events where associatedUsername = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, username);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DataAccessException("Error encountered while clearing events associated with user " + username + ": " + e);
         }
     }
 }

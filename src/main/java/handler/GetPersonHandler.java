@@ -26,18 +26,18 @@ public class GetPersonHandler extends Handler {
         Headers reqHeaders = exchange.getRequestHeaders();
         if (!reqHeaders.containsKey("Authorization")) send400Error(exchange);
         String authToken = reqHeaders.getFirst("Authorization");
-        if (!authToken.equals("afj232hj2332")) send400Error(exchange);
 
         String[] pathSegments = exchange.getRequestURI().getPath().split("/");
         String username = pathSegments[pathSegments.length - 1];
-        System.out.println("Requested user with username: " + username);
 
         GetPersonRequest request = new GetPersonRequest(username);
 
         GetPersonService service = new GetPersonService();
-        GetPersonResult result = service.getPerson(request);
+        GetPersonResult result = service.getPerson(request, authToken);
 
-        exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+        int responseCode = HttpURLConnection.HTTP_OK;
+        if(result.isSuccess() == false) responseCode = HttpURLConnection.HTTP_BAD_REQUEST;
+        exchange.sendResponseHeaders(responseCode, 0);
 
         Writer resBody = new OutputStreamWriter(exchange.getResponseBody());
         Gson gson = new Gson();

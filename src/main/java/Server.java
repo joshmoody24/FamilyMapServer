@@ -82,7 +82,7 @@ public class Server {
             server.createContext("/clear", new ClearHandler());
             server.createContext("/person/", new GetPersonHandler());
             server.createContext("/person", new GetAllPersonsHandler());
-            server.createContext("/event/todo", new GetEventHandler());
+            server.createContext("/event/", new GetEventHandler());
             server.createContext("/event", new GetAllEventsHandler());
         }
         catch(Exception e){

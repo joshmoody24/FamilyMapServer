@@ -27,7 +27,6 @@ public class RegisterService {
     public RegisterResult register(RegisterRequest r){
         Database db = new Database();
         try {
-            System.out.println("Registering user: " + r.getUsername());
             Connection conn = db.openConnection();
             UserDao userDao = new UserDao(conn);
             UUID personId = UUID.randomUUID();

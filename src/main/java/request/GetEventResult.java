@@ -23,12 +23,12 @@ public class GetEventResult extends Result {
     /**
      * latitude of the event
      */
-    String latitude;
+    Float latitude;
 
     /**
      * longitude of the event
      */
-    String longitude;
+    Float longitude;
 
     /**
      * country of the event
@@ -48,7 +48,7 @@ public class GetEventResult extends Result {
     /**
      * year the event took place
      */
-    int year;
+    Integer year;
 
 
     /**
@@ -65,7 +65,7 @@ public class GetEventResult extends Result {
      * @param eventType the type of event
      * @param year the year the event took place
      */
-    public GetEventResult(boolean success, String message, String associatedUsername, String eventID, String personID, String latitude, String longitude, String country, String city, String eventType, int year) {
+    public GetEventResult(boolean success, String message, String associatedUsername, String eventID, String personID, Float latitude, Float longitude, String country, String city, String eventType, Integer year) {
         super(success, message);
         this.associatedUsername = associatedUsername;
         this.eventID = eventID;
@@ -89,11 +89,11 @@ public class GetEventResult extends Result {
         return personID;
     }
 
-    public String getLatitude() {
+    public Float getLatitude() {
         return latitude;
     }
 
-    public String getLongitude() {
+    public Float getLongitude() {
         return longitude;
     }
 
@@ -109,7 +109,7 @@ public class GetEventResult extends Result {
         return eventType;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return year;
     }
 

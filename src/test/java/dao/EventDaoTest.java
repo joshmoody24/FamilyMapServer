@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EventDaoTest {
     private Database db;
     private Event bestEvent;
+    private Event secondEvent;
     private EventDao eDao;
 
     @BeforeEach
@@ -20,8 +22,13 @@ public class EventDaoTest {
         // Here we can set up any classes or variables we will need for each test
         // lets create a new instance of the Database class
         db = new Database();
+
         // and a new event with random data
         bestEvent = new Event("Biking_123A", "Gale", "Gale123A",
+                35.9f, 140.1f, "Japan", "Ushiku",
+                "Biking_Around", 2016);
+        // and a second event
+        secondEvent = new Event("Biking_123B", "Gale", "Boris",
                 35.9f, 140.1f, "Japan", "Ushiku",
                 "Biking_Around", 2016);
 
@@ -43,33 +50,90 @@ public class EventDaoTest {
 
     @Test
     public void createPass() throws DataAccessException {
-        // Start by inserting an event into the database.
         eDao.create(bestEvent);
-        // Let's use a find method to get the event that we just put in back out.
         Event compareTest = eDao.find(bestEvent.getEventID());
-        // First lets see if our find method found anything at all. If it did then we know that we got
-        // something back from our database.
         assertNotNull(compareTest);
-        // Now lets make sure that what we put in is the same as what we got out. If this
-        // passes then we know that our insert did put something in, and that it didn't change the
-        // data in any way.
-        // This assertion works by calling the equals method in the Event class.
         assertEquals(bestEvent, compareTest);
     }
 
     @Test
     public void createFail() throws DataAccessException {
-        // Let's do this test again, but this time lets try to make it fail.
-        // If we call the method the first time the event will be inserted successfully.
         eDao.create(bestEvent);
-
-        // However, our sql table is set up so that the column "eventID" must be unique, so trying to insert
-        // the same event again will cause the insert method to throw an exception, and we can verify this
-        // behavior by using the assertThrows assertion as shown below.
-
-        // Note: This call uses a lambda function. A lambda function runs the code that comes after
-        // the "()->", and the assertThrows assertion expects the code that ran to throw an
-        // instance of the class in the first parameter, which in this case is a DataAccessException.
         assertThrows(DataAccessException.class, () -> eDao.create(bestEvent));
+    }
+
+    @Test
+    public void findPass() throws DataAccessException {
+        eDao.create(bestEvent);
+        Event event = eDao.find("Biking_123A");
+        assertNotNull(event);
+        assertEquals(event.getAssociatedUsername(), "Gale");
+    }
+
+    @Test
+    public void findFail() throws DataAccessException {
+        eDao.create(bestEvent);
+        Event event = eDao.find("doesn't exist");
+        assertNull(event);
+    }
+
+    @Test
+    public void findForExistingUser() throws DataAccessException {
+        eDao.create(bestEvent);
+        eDao.create(secondEvent);
+        List<Event> events = eDao.findForUser("Gale");
+        assertEquals(events.size(), 2);
+    }
+
+    @Test
+    public void findForNonexistentUser() throws DataAccessException {
+        eDao.create(bestEvent);
+        eDao.create(secondEvent);
+        List<Event> events = eDao.findForUser("Nonexistent User");
+        assertEquals(events.size(), 0);
+    }
+
+    @Test
+    public void findForExistingPerson() throws DataAccessException {
+        eDao.create(bestEvent);
+        eDao.create(secondEvent);
+        List<Event> events = eDao.findForPerson("Boris");
+        assertEquals(events.size(), 1);
+        events = eDao.findForPerson("Gale123A");
+        assertEquals(events.size(), 1);
+    }
+
+    @Test
+    public void findForNonexistentPerson() throws DataAccessException {
+        eDao.create(bestEvent);
+        eDao.create(secondEvent);
+        List<Event> events = eDao.findForPerson("Nonexistent Person");
+        assertEquals(events.size(), 0);
+    }
+
+    @Test
+    public void clearTest() throws DataAccessException {
+        assertDoesNotThrow(() -> eDao.clear());
+        assertNull(eDao.find("Biking_123A"));
+    }
+
+    @Test
+    public void clearForUserPass() throws DataAccessException {
+        // add an event for someone else to make sure it's not deleted
+        eDao.create(bestEvent);
+        eDao.create(secondEvent);
+        eDao.create(new Event("other user", "NOT GALE", "Boris",
+                35.9f, 140.1f, "Japan", "Ushiku",
+                "Biking_Around", 2016));
+        eDao.clearForUser("Gale");
+        assertNull(eDao.find("Biking123A"));
+        assertNotNull(eDao.find("other user"));
+    }
+
+    @Test
+    public void clearForNonexistentUser() throws DataAccessException {
+        eDao.create(bestEvent);
+        assertDoesNotThrow(() -> eDao.clearForUser("Nonexistent person"));
+        assertNotNull(eDao.find("Biking_123A"));
     }
 }

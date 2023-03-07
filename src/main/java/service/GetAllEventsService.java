@@ -34,7 +34,6 @@ public class GetAllEventsService {
 
             String username = token.getUsername();
             List<Event> events = new EventDao(conn).findForUser(username);
-
             db.closeConnection(true);
             return new GetAllEventsResult(true, null, events.toArray(new Event[0]));
         }

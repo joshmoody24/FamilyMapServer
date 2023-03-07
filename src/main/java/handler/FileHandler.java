@@ -21,8 +21,9 @@ public class FileHandler extends Handler {
             return;
         }
 
-        int responseCode = 200;
+        int responseCode = HttpURLConnection.HTTP_OK;
 
+        // handle default file (index.html)
         String path = exchange.getRequestURI().getPath();
         if(path.equals("/") || path.equals("")){
             path = "/index.html";
@@ -35,22 +36,18 @@ public class FileHandler extends Handler {
         }
         file = new File(path);
 
-        System.out.println("fetching file " + path);
+        // send the file to the client
         OutputStream os = exchange.getResponseBody();
-
         try {
-
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
             String line;
             String response = "";
+
             while ((line = bufferedReader.readLine()) != null) {
-                System.out.println(line);
                 response += line;
             }
 
             exchange.sendResponseHeaders(responseCode, response.length());
-
-            System.out.println(response);
             writeString(response, os);
 
         } catch (Exception ex){

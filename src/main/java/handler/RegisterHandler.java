@@ -32,10 +32,12 @@ public class RegisterHandler extends Handler {
             RegisterService service = new RegisterService();
             RegisterResult result = service.register(request);
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+            int responseCode = HttpURLConnection.HTTP_OK;
+            if(result.isSuccess() == false) responseCode = HttpURLConnection.HTTP_BAD_REQUEST;
+            exchange.sendResponseHeaders(responseCode, 0);
+
             Writer resBody = new OutputStreamWriter(exchange.getResponseBody());
             gson.toJson(result, resBody);
-            System.out.println(result.getPersonId());
             resBody.close();
         }
         catch(Exception e){
